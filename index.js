@@ -8,7 +8,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import mongoose from 'mongoose'
 
-import typeDefs from './schema'
+import typeDefs from './schemas'
 import resolvers from './resolvers'
 
 const schema = makeExecutableSchema({
@@ -24,24 +24,29 @@ const PORT = 3030
 
 const app = express()
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({
-    schema,
-    context: {
-        Cat
-    }
-}))
-
-app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
-
-const server = createServer(app)
-
-server.listen(PORT, () => {
-    new SubscriptionServer({
-      execute,
-      subscribe,
-      schema,
-    }, {
-      server: server,
-      path: '/subscriptions',
+app.use(
+    '/graphql',
+    bodyParser.json(), 
+    graphqlExpress(req => ({
+        schema,
+        context: {
+            user: req.user,
+            Cat
+        }
+    }))
+)
+    
+    app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
+    
+    const server = createServer(app)
+    
+    server.listen(PORT, () => {
+        new SubscriptionServer({
+            execute,
+            subscribe,
+            schema,
+        }, {
+            server: server,
+            path: '/subscriptions',
+        })
     })
-})
