@@ -16,9 +16,14 @@ const schema = makeExecutableSchema({
     resolvers
 })
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/test')
 
-var Cat = mongoose.model('Cat', { name: String });
+var Cat = mongoose.model('Cat', { name: String })
+var User = mongoose.model('Users', { 
+    username: String,
+    email: String,
+    password: String
+})
 
 const PORT = 3030
 
@@ -31,22 +36,23 @@ app.use(
         schema,
         context: {
             user: req.user,
-            Cat
+            Cat,
+            User
         }
     }))
 )
-    
-    app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
-    
-    const server = createServer(app)
-    
-    server.listen(PORT, () => {
-        new SubscriptionServer({
-            execute,
-            subscribe,
-            schema,
-        }, {
-            server: server,
-            path: '/subscriptions',
-        })
+
+app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
+
+const server = createServer(app)
+
+server.listen(PORT, () => {
+    new SubscriptionServer({
+        execute,
+        subscribe,
+        schema,
+    }, {
+        server: server,
+        path: '/subscriptions',
     })
+})

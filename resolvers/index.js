@@ -1,8 +1,10 @@
 import _ from 'lodash'
 import catResolvers from './catResolvers'
+import userResolvers from './userResolvers'
 
 const allResolvers = [
-    catResolvers
+    catResolvers,
+    userResolvers
 ]
 
 const mergedResolvers = {}

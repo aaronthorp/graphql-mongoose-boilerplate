@@ -12,7 +12,9 @@ const queryDef = `
 `
 
 const mutationDef = `
-    createUser(username: String!, email: String!, password: String!): User!
+    register(username: String!, email: String!, password: String!): User!
+    login(username: String!, password: String!): String!
+    logout: String
 `
 
 const subscriptionDef = `
