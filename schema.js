@@ -12,4 +12,14 @@ export default `
     type Mutation {
         createCat(name: String!): Cat!
     }
+
+    type Subscription {
+        catAdded: Cat!
+    }
+
+    schema {
+        query: Query
+        mutation: Mutation
+        subscription: Subscription
+    }
 `

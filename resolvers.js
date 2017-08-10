@@ -1,3 +1,9 @@
+import  { PubSub } from 'graphql-subscriptions'
+
+const pubsub = new PubSub()
+
+const CAT_ADDED = 'CAT_ADDED'
+
 export default {
     Query: {
         allCats: async (parent, args, { Cat }) => {
@@ -12,7 +18,16 @@ export default {
         createCat: async (parent, args, { Cat }) => {
             const kitty = await new Cat(args).save()
             kitty._id = kitty._id.toString()
+            pubsub.publish(CAT_ADDED, {
+                catAdded: kitty
+            })
             return kitty
         }
+    },
+    Subscription: {
+        catAdded: {
+            subscribe: () => pubsub.asyncIterator(CAT_ADDED)
+        }
+
     }
 }

@@ -1,7 +1,10 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import { graphiqlExpress, graphqlExpress } from 'apollo-server-express'
+import { createServer } from 'http'
 import { makeExecutableSchema } from 'graphql-tools'
+import { execute, subscribe } from 'graphql'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import mongoose from 'mongoose'
 
@@ -30,4 +33,15 @@ app.use('/graphql', bodyParser.json(), graphqlExpress({
 
 app.use('/graphiql', graphiqlExpress({endpointURL: '/graphql'}))
 
-app.listen(PORT)
+const server = createServer(app)
+
+server.listen(PORT, () => {
+    new SubscriptionServer({
+      execute,
+      subscribe,
+      schema,
+    }, {
+      server: server,
+      path: '/subscriptions',
+    })
+})
