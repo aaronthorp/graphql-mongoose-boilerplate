@@ -1,12 +1,9 @@
 import  { PubSub } from 'graphql-subscriptions'
 import bcrypt from 'bcrypt'
 import _ from 'lodash'
-import jwt from 'jsonwebtoken'
 
 import {requiresAuth, reqiresAdmin} from "../permissions"
-
-import { JWT_SECRET } from '../secret'
-import { refreshTokens } from '../auth'
+import {createTokens, refreshTokens, SECRET } from '../auth'
 
 const pubsub = new PubSub()
 
@@ -53,26 +50,12 @@ export default {
                 throw new Error('Invalid Password')
             }
             
-            const token = await jwt.sign(
-                {
-                    user: _.pick(user, ['_id', 'username'])
-                }, 
-                JWT_SECRET, 
-                {
-                    expiresIn: '10m'
-                }
-            )
+            const [token, refreshToken] = await createTokens(user)
             
-            const refreshToken = await jwt.sign(
-                {
-                    _id: user._id,
-                }, 
-                JWT_SECRET, 
-                {
-                    expiresIn: '30d'
-                }
-            )
-            return { token, refreshToken }
+            return {
+                token, 
+                refreshToken,
+            }
         },
         refreshTokens: async (parent, { token, refreshToken }, { models }) => {
             const newTokens = await refreshTokens(token, refreshToken, models, JWT_SECRET)
@@ -88,8 +71,4 @@ export default {
         }
         
     }
-}
-
-const generateTokens = (user) => {
-    
 }
