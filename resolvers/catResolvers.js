@@ -6,8 +6,8 @@ const CAT_ADDED = 'CAT_ADDED'
 
 export default {
     Query: {
-        allCats: async (parent, args, { Cat }) => {
-            const cats = await Cat.find()
+        allCats: async (parent, args, { models }) => {
+            const cats = await models.Cat.find()
             return cats.map(x => {
                 x._id = x._id.toString()
                 return x
@@ -15,8 +15,8 @@ export default {
         }
     }, 
     Mutation: {
-        createCat: async (parent, args, { Cat }) => {
-            const kitty = await new Cat(args).save()
+        createCat: async (parent, args, { models }) => {
+            const kitty = await new models.Cat(args).save()
             kitty._id = kitty._id.toString()
             pubsub.publish(CAT_ADDED, {
                 catAdded: kitty

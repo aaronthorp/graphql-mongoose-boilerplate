@@ -47,5 +47,5 @@ const schema = `
     }
 `
 
-console.log(schema)
+//console.log(schema)
 export default schema 
