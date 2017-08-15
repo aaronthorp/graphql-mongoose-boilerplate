@@ -15,7 +15,7 @@ const typeDef = `
 `
 
 const queryDef = `
-    allUsers: [User!]!
+    allUsers(page: Int!, pageSize: Int): [User!]!
     me: User
 `
 

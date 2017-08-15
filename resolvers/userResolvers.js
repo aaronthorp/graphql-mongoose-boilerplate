@@ -11,8 +11,12 @@ const USER_ADDED = 'USER_ADDED'
 
 export default {
     Query: {
-        allUsers: requiresAdmin.createResolver(async (parent, args, { models }) => {
-            const users = await models.User.find()
+        allUsers: requiresAdmin.createResolver(async (parent, { page, pageSize = 10 }, { models }) => {
+            const filter = {
+                limit: pageSize,
+                skip: (page - 1) * pageSize
+            }
+            const users = await models.User.find().limit(filter.limit).skip(filter.skip)
             return users.map(x => {
                 x.password = '__SECRET__'
                 return x
