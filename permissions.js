@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 const createResolver = (resolver) => {
     const baseResolver = resolver
 
@@ -12,17 +14,19 @@ const createResolver = (resolver) => {
     return baseResolver
 }
 
-export const requiresAuth = createResolver((parent, args, context) => {
+export const requiresAuth = createResolver(async (parent, args, context) => {
     if (!context.user) {
         throw new Error('Not authenticated')
     }
 })
 
-export const requiresAdmin = requiresAuth.createResolver((parent, args, context) => {
+export const requiresAdmin = requiresAuth.createResolver(async (parent, args, {models, user}) => {
     // check admin against database not token
-    var user = context.models.User.findOne({_id: context.user._id})
-    if (!user.isAdmin) {
+    var u = await models.User.findOne({_id: user._id})
+    if (!_.includes(u.permissions, 'admin')) {
         throw new Error('Not administrator')
     }
+    //put the current user details back into the resolve chain
+    user = _.omit(u, 'password')
 })
 

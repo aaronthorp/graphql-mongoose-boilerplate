@@ -1,18 +1,31 @@
 import mongoose from 'mongoose'
+import customId from 'mongoose-hook-custom-id'
 
+import {Schema} from 'mongoose'
 mongoose.Promise = global.Promise
 
-mongoose.connect('mongodb://localhost/test')
+mongoose.connect('mongodb://localhost/test', {
+    useMongoClient: true,
+})
 
-var Cat = mongoose.model('Cat', { 
+// enforce String _id instead of ObjectID
+mongoose.plugin(customId, {mongoose: mongoose})
+
+const CatSchema = new Schema({ 
     name: String 
 })
 
-var User = mongoose.model('Users', { 
+const Cat = mongoose.model('Cat', CatSchema)
+
+const UserSchema = new Schema({ 
     username: String,
     email: String,
-    password: String
+    password: String,
+    permissions: [String],
 })
+
+const User = mongoose.model('Users', UserSchema)
+
 
 const models = {
     Cat,

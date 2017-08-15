@@ -2305,6 +2305,16 @@ mongoose:
     regexp-clone "0.0.1"
     sliced "1.0.1"
 
+mongoose-hook-custom-id:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/mongoose-hook-custom-id/-/mongoose-hook-custom-id-0.1.4.tgz#369e3be5fe4877adf148522dcde1389214307291"
+  dependencies:
+    mongoose-hook "0.1.5"
+
+mongoose-hook@0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/mongoose-hook/-/mongoose-hook-0.1.5.tgz#019c6ca873c9e8f118520a906e37cdb88f44a3a1"
+
 mpath@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/mpath/-/mpath-0.3.0.tgz#7a58f789e9b5fd3c94520634157960f26bd5ef44"

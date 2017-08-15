@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import _ from 'lodash'
 
+import models from './models'
+
 const JWT_SECRET = "test"
 
 export const createTokens = async (user) => {

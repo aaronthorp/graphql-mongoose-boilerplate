@@ -31,6 +31,7 @@
     "jsonwebtoken": "^7.4.2",
     "lodash": "^4.17.4",
     "mongoose": "^4.11.6",
+    "mongoose-hook-custom-id": "^0.1.4",
     "subscriptions-transport-ws": "^0.8.2"
   }
 }

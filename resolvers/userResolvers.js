@@ -2,7 +2,7 @@ import  { PubSub } from 'graphql-subscriptions'
 import bcrypt from 'bcrypt'
 import _ from 'lodash'
 
-import {requiresAuth, reqiresAdmin} from "../permissions"
+import {requiresAuth, requiresAdmin} from "../permissions"
 import {createTokens, refreshTokens, SECRET } from '../auth'
 
 const pubsub = new PubSub()
@@ -11,10 +11,9 @@ const USER_ADDED = 'USER_ADDED'
 
 export default {
     Query: {
-        allUsers: requiresAuth.createResolver(async (parent, args, { models }) => {
+        allUsers: requiresAdmin.createResolver(async (parent, args, { models }) => {
             const users = await models.User.find()
             return users.map(x => {
-                x._id = x._id.toString()
                 x.password = '__SECRET__'
                 return x
             })
@@ -24,7 +23,6 @@ export default {
             if (!x) {
                 return null
             }
-            x._id = x._id.toString()
             x.password = '__SECRET__'
             return x
         },
@@ -32,7 +30,10 @@ export default {
     Mutation: {
         register: async (parent, args, { models }) => {
             const user = args
+            
             user.password = await bcrypt.hash(user.password, 12)
+            user.permissions = ['user']
+
             const newUser = await new models.User(user).save()
             newUser._id = newUser._id.toString()
             pubsub.publish(USER_ADDED, {
@@ -57,13 +58,13 @@ export default {
                 refreshToken,
             }
         },
-        refreshTokens: async (parent, { token, refreshToken }, { models }) => {
+        refreshTokens: requiresAuth.createResolver(async (parent, { token, refreshToken }, { models, user }) => {   
             const newTokens = await refreshTokens(token, refreshToken, models, JWT_SECRET)
             return {
                 token: newTokens.token,
                 refreshToken: newTokens.refreshToken
             }
-        } 
+        })
     },
     Subscription: {
         userAdded: {

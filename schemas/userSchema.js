@@ -4,6 +4,7 @@ const typeDef = `
         username: String!
         email: String!
         password: String!
+        permissions: [String]
     }
 
     type AuthPayload {
